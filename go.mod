@@ -7,4 +7,5 @@ require github.com/manifoldco/promptui v0.9.0
 require (
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	gopkg.in/ini.v1 v1.66.2 // indirect
 )
