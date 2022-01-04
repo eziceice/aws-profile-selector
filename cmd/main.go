@@ -23,8 +23,8 @@ func main() {
 	}
 
 	prompt := promptui.Select{
-		Label: "Select AWS Profile",
-		Items: profiles,
+		Label:     "Select AWS Profile",
+		Items:     profiles,
 		Templates: &templates,
 	}
 	_, targetProfile, err := prompt.Run()
