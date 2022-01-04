@@ -6,7 +6,7 @@ This tool works with [saml2aws](https://github.com/Versent/saml2aws), it's a wra
 
 ### Prerequisites
 
-- Install `saml2aws` and configure it properly.
+- Install `saml2aws` and configure it properly
 
 ### Usage
 
