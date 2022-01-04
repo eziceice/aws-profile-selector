@@ -9,12 +9,12 @@ import (
 )
 
 type Credentials struct {
-	AccessKeyId          string
-	AccessKey            string
-	SessionToken         string
-	SecurityToken        string
-	PrincipalArn         string
-	SecurityTokenExpires string
+	AccessKeyId          string `ini:"aws_access_key_id"`
+	AccessKey            string `ini:"aws_secret_access_key"`
+	SessionToken         string `ini:"aws_session_token"`
+	SecurityToken        string `ini:"aws_security_token"`
+	PrincipalArn         string `ini:"x_principal_arn"`
+	SecurityTokenExpires string `ini:"x_security_token_expires"`
 }
 
 const (
@@ -62,14 +62,23 @@ func main() {
 	cmd.Stderr = os.Stderr
 	_ = cmd.Run()
 
-	_, err = overwriteDefaultCredentials(targetProfile)
+	_, err = updateCredentials(targetProfile)
 	if err != nil {
-		fmt.Printf("Cannot overwrite default AWS credentials %v\n", err)
+		fmt.Printf("Cannot update default AWS credentials %v\n", err)
 		return
 	}
+
+	// export required Envs
+	fmt.Println("\nExport below env vars in your shell session if required")
+	arg0 = "script"
+	cmd = exec.Command(app, arg0, arg1, arg2)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	_ = cmd.Run()
 }
 
-func overwriteDefaultCredentials(targetProfile string) (*Credentials, error) {
+func updateCredentials(targetProfile string) (*Credentials, error) {
 	dir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
@@ -80,14 +89,12 @@ func overwriteDefaultCredentials(targetProfile string) (*Credentials, error) {
 		return nil, err
 	}
 
+	credentials := new(Credentials)
 	targetSection := cfg.Section(targetProfile)
-	credentials := &Credentials{
-		AccessKeyId:          targetSection.Key(AccessKeyId).String(),
-		AccessKey:            targetSection.Key(AccessKey).String(),
-		SessionToken:         targetSection.Key(SessionToken).String(),
-		SecurityToken:        targetSection.Key(SecurityToken).String(),
-		PrincipalArn:         targetSection.Key(PrincipalArn).String(),
-		SecurityTokenExpires: targetSection.Key(SecurityTokenExpires).String(),
+
+	err = targetSection.MapTo(credentials)
+	if err != nil {
+		return nil, err
 	}
 
 	defaultSection := cfg.Section("default")
